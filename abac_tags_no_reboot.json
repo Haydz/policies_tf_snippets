@@ -1,0 +1,78 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeInstances",
+                "ec2:DescribeImages",
+                "ec2:DescribeTags",
+                "ec2:DescribeSnapshots",
+                "ec2:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "elasticloadbalancing:*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "cloudwatch:*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "autoscaling:*",
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "iam:AWSServiceName": [
+                        "autoscaling.amazonaws.com",
+                        "ec2scheduled.amazonaws.com",
+                        "elasticloadbalancing.amazonaws.com",
+                        "spot.amazonaws.com",
+                        "spotfleet.amazonaws.com",
+                        "transitgateway.amazonaws.com"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "AllButStopRebootIfTags",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:*"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:ResourceTag/Environment": [
+                        "Development",
+                        "Production"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "RebootStopIfTags",
+            "Effect": "Deny",
+            "Action": [
+                "ec2:StopInstances",
+                "ec2:RebootInstances"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:ResourceTag/Environment": "Production"
+                }
+            }
+        }
+    ]
+}
