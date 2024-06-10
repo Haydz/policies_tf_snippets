@@ -1,0 +1,21 @@
+{
+  "assumeRole": "arn:aws:iam::xxxx:role/SSM-Automation-Role",
+  "description": "Removes the security group rule that allows traffic from 0.0.0.0/0.",
+  "mainSteps": [
+    {
+      "action": "aws:invokeLambdaFunction",
+      "inputs": {
+        "FunctionName": "arn:aws:lambda:ca-central-1:xxx:function:DeleteSecurityGroupUnrestrictedRules",
+        "Payload": "{\"SecurityGroupId\":\"{{ SecurityGroupId }}\"}"
+      },
+      "name": "InvokeLambdaFunction"
+    }
+  ],
+  "parameters": {
+    "SecurityGroupId": {
+      "description": "The ID of the security group to remediate.",
+      "type": "String"
+    }
+  },
+  "schemaVersion": "0.3"
+}
